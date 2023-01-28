@@ -24,10 +24,13 @@ public sealed class RootController : YukiController
     {
         var isAssignee = req.GuildId is null ||
                          await _service.CheckAssignee(req.Platform, req.GuildId, req.SelfId);
+        var authority = await _service.GetUserAuthority(req.Platform, req.UserId);
+        if (isAssignee)
+            await _service.SaveCommandHistory(req, authority);
         return OkResp(new PrecheckResponse
         {
             IsAssignee = isAssignee,
-            UserAuthority = await _service.GetUserAuthority(req.Platform, req.UserId)
+            UserAuthority = authority
         });
     }
 }

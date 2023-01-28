@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using YukiChan.Server.Databases;
 using YukiChan.Server.Models;
+using YukiChan.Shared.Data.Console;
 using YukiChan.Shared.Models;
 
 namespace YukiChan.Server.Services.Console;
@@ -9,11 +10,13 @@ public sealed class PrecheckService
 {
     private readonly GuildDataDbContext _guildData;
     private readonly UserDataDbContext _userData;
+    private readonly CommandHistoryDbContext _cmdHistoryData;
 
-    public PrecheckService(GuildDataDbContext guildData, UserDataDbContext userData)
+    public PrecheckService(GuildDataDbContext guildData, UserDataDbContext userData, CommandHistoryDbContext cmdHistoryData)
     {
         _guildData = guildData;
         _userData = userData;
+        _cmdHistoryData = cmdHistoryData;
     }
 
     public async Task<bool> CheckAssignee(string platform, string guildId, string botId)
@@ -56,5 +59,23 @@ public sealed class PrecheckService
         }
 
         return user.UserAuthority;
+    }
+
+    public Task SaveCommandHistory(PrecheckRequest req, YukiUserAuthority authority)
+    {
+        _cmdHistoryData.Histories.Add(new CommandHistory
+        {
+            Time = DateTime.UtcNow,
+            Platform = req.Platform,
+            GuildId = req.GuildId,
+            ChannelId = req.ChannelId,
+            UserId = req.UserId,
+            UserAuthority = authority,
+            AssigneeId = req.SelfId,
+            Environment = req.Environment,
+            Command = req.Command,
+            CommandText = req.CommandText
+        });
+        return _cmdHistoryData.SaveChangesAsync();
     }
 }

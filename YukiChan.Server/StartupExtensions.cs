@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Tomlyn.Extensions.Configuration;
@@ -27,7 +28,6 @@ internal static class StartupExtensions
         // 清除所有配置源
         builder.Configuration.Sources.Clear();
         // 添加 TOML 配置文件
-        AddYukiConfig("common");
         AddYukiConfig("serilog");
         AddYukiConfig("services");
         AddYukiConfig("tokens");
@@ -68,6 +68,7 @@ internal static class StartupExtensions
         AddAndEnsureCreated<ArcaeaDbContext>();
         AddAndEnsureCreated<UserDataDbContext>();
         AddAndEnsureCreated<GuildDataDbContext>();
+        AddAndEnsureCreated<CommandHistoryDbContext>();
     }
 
     internal static void AddConsoleServices(this IServiceCollection services, IConfiguration configuration)
@@ -96,7 +97,9 @@ internal static class StartupExtensions
                 ctx.Response.ContentType = MediaTypeNames.Application.Json;
                 await ctx.Response.WriteAsJsonAsync(new YukiResponse
                 {
-                    Code = YukiErrorCode.InternalServerError
+                    Code = YukiErrorCode.InternalServerError,
+                    Message = ctx.Features.Get<IExceptionHandlerPathFeature>()?.Error.Message
+                              ?? YukiErrorCode.InternalServerError.GetMessage()
                 }, YukiResponse.JsonSerializerOptions);
             });
         });
