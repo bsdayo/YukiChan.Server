@@ -19,11 +19,20 @@ public sealed class GuildsController : YukiController
         _service = service;
     }
 
+    [HttpGet("{platform}/{guildId}/assignee")]
+    public async Task<IActionResult> OnGetAssignee(string platform, string guildId)
+    {
+        var assignee = await _service.GetAssignee(platform, guildId);
+        return assignee is not null
+            ? OkResp(new GuildAssigneeResponse { Assignee = assignee })
+            : NotFoundResp();
+    }
+
     [HttpPut("{platform}/{guildId}/assignee")]
     public async Task<IActionResult> OnUpdateAssignee(string platform, string guildId,
         [FromBody] GuildUpdateAssigneeRequest req)
     {
-        await _service.UpdateGuildAssignee(platform, guildId, req.NewAssigneeId);
+        await _service.UpdateAssignee(platform, guildId, req.NewAssigneeId);
         return OkResp();
     }
 }

@@ -12,8 +12,17 @@ public sealed class GuildsService
     {
         _guildData = guildData;
     }
+    
+    public async Task<string?> GetAssignee(string platform, string guildId)
+    {
+        var guild = await _guildData.Guilds
+            .AsNoTracking()
+            .FirstOrDefaultAsync(guild => guild.Platform == platform &&
+                                          guild.GuildId == guildId);
+        return guild?.Assignee;
+    }
 
-    public async Task UpdateGuildAssignee(string platform, string guildId, string botId)
+    public async Task UpdateAssignee(string platform, string guildId, string botId)
     {
         var guild = await _guildData.Guilds
             .FirstOrDefaultAsync(guild => guild.Platform == platform &&
