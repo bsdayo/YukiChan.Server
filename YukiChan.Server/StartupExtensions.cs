@@ -78,6 +78,9 @@ internal static class StartupExtensions
         services // Root
             .AddScoped<PrecheckService>();
 
+        services // Guilds
+            .AddScoped<GuildsService>();
+
         services // Arcaea
             .AddDbContext<ArcaeaSongDbContext>()
             .AddScoped<ArcaeaService>()
