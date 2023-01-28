@@ -1,0 +1,11 @@
+﻿[Services.Console.Arcaea]
+    # ArcaeaUnlimitedAPI 基本 URL
+    AuaApiUrl = "https://example.com/"
+    # ArcaeaUnlimitedAPI 验证令牌
+    AuaToken = "a...w..."
+    # ArcaeaUnlimitedAPI 请求超时秒数
+    AuaTimeout = 120
+    # ArcaeaLimitedAPI 验证令牌
+    AlaToken = "0|qwertyuiop"
+    # ArcaeaLimitedAPI 请求超时秒数
+    AlaTimeout = 60

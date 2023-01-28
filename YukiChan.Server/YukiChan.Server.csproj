@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="..\..\configs\server\*.toml" LinkBase="configs" ExcludeFromSingleFile="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="..\configs\*.toml" LinkBase="configs" ExcludeFromSingleFile="true" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
