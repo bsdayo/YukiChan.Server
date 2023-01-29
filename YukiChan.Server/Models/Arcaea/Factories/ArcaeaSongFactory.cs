@@ -14,7 +14,7 @@ public static class ArcaeaSongFactory
             SetFriendly = content.Difficulties[0].SetFriendly,
             Difficulties = content.Difficulties.Select((d, i) => new ArcaeaChart
             {
-                RatingClass = i,
+                Difficulty = (ArcaeaDifficulty)i,
                 NameEn = d.NameEn,
                 NameJp = d.NameJp,
                 Artist = d.Artist,
@@ -24,11 +24,10 @@ public static class ArcaeaSongFactory
                 Side = d.Side,
                 WorldUnlock = d.WorldUnlock,
                 RemoteDownload = d.RemoteDownload,
-                Bg = d.Bg,
+                Background = d.Bg,
                 Date = d.Date,
                 Version = d.Version,
-                Difficulty = d.Difficulty,
-                Rating = d.Rating,
+                Rating = d.Rating / 10d,
                 Note = d.Note,
                 ChartDesigner = d.ChartDesigner,
                 JacketDesigner = d.JacketDesigner,
