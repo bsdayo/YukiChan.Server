@@ -59,26 +59,4 @@ public static class ArcaeaRecordFactory
             PlayTime = DateTimeOffset.FromUnixTimeMilliseconds(record.TimePlayed).UtcDateTime
         };
     }
-
-    public static ArcaeaRecord GenerateFake(ArcaeaSongDbChart chart)
-    {
-        return new ArcaeaRecord
-        {
-            Name = chart.NameEn,
-            SongId = chart.SongId,
-            Potential = chart.Rating / 10d + 2,
-            Rating = chart.Rating / 10d,
-            Difficulty = (ArcaeaDifficulty)chart.RatingClass,
-            Score = 10_000_000 + chart.Note,
-            ShinyPureCount = chart.Note,
-            PureCount = chart.Note,
-            FarCount = 0,
-            LostCount = 0,
-            ClearType = ArcaeaClearType.PureMemory,
-            Grade = ArcaeaGrade.EXP,
-            RecollectionRate = 100,
-            JacketOverride = chart.JacketOverride,
-            PlayTime = DateTimeOffset.FromUnixTimeSeconds(chart.Date).UtcDateTime
-        };
-    }
 }
