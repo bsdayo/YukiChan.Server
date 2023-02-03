@@ -191,5 +191,24 @@ public sealed class ArcaeaService
         return YukiErrorCode.Ok;
     }
 
+    public Task<bool> CheckSongIdExists(string songId)
+    {
+        return _songDb.Charts
+            .AsNoTracking()
+            .AnyAsync(chart => chart.SongId == songId);
+    }
+
+    public async Task<bool> AddAliasSubmission(ArcaeaAliasSubmission submission)
+    {
+        if (await _database.AliasSubmissions
+                .AsNoTracking()
+                .ContainsAsync(submission))
+            return false;
+
+        _database.AliasSubmissions.Add(submission);
+        await _database.SaveChangesAsync();
+        return true;
+    }
+
     #endregion
 }

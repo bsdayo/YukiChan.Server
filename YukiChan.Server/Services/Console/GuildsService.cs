@@ -6,9 +6,9 @@ namespace YukiChan.Server.Services.Console;
 
 public sealed class GuildsService
 {
-    private readonly GuildDataDbContext _guildData;
+    private readonly GuildsDbContext _guildData;
 
-    public GuildsService(GuildDataDbContext guildData)
+    public GuildsService(GuildsDbContext guildData)
     {
         _guildData = guildData;
     }

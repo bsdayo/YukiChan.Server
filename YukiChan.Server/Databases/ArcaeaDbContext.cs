@@ -13,6 +13,8 @@ public sealed class ArcaeaDbContext : DbContext
 
     public DbSet<ArcaeaUserPreferences> Preferences => Set<ArcaeaUserPreferences>();
 
+    public DbSet<ArcaeaAliasSubmission> AliasSubmissions => Set<ArcaeaAliasSubmission>();
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"DataSource={DbPath}");
 }

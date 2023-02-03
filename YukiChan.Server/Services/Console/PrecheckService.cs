@@ -8,11 +8,11 @@ namespace YukiChan.Server.Services.Console;
 
 public sealed class PrecheckService
 {
-    private readonly GuildDataDbContext _guildData;
-    private readonly UserDataDbContext _userData;
+    private readonly GuildsDbContext _guildData;
+    private readonly UsersDbContext _userData;
     private readonly CommandHistoryDbContext _cmdHistoryData;
 
-    public PrecheckService(GuildDataDbContext guildData, UserDataDbContext userData, CommandHistoryDbContext cmdHistoryData)
+    public PrecheckService(GuildsDbContext guildData, UsersDbContext userData, CommandHistoryDbContext cmdHistoryData)
     {
         _guildData = guildData;
         _userData = userData;

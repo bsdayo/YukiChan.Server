@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YukiChan.Server.Models.Arcaea;
 using YukiChan.Server.Services.Console.Arcaea;
 using YukiChan.Server.Utils;
 using YukiChan.Shared.Data;
@@ -175,6 +176,18 @@ public sealed class ArcaeaController : YukiController
             YukiErrorCode.Arcaea_SongNotFound => NotFoundResp(err),
             _ => BadRequestResp(err)
         };
+    }
+
+    [HttpPost("alias-submissions")]
+    public async Task<IActionResult> OnAddAliasSubmission([FromBody] ArcaeaAliasSubmission submission)
+    {
+        if (!await _service.CheckSongIdExists(submission.SongId))
+            return BadRequestResp(YukiErrorCode.Arcaea_SongNotFound);
+
+        if (!await _service.AddAliasSubmission(submission))
+            return BadRequestResp(YukiErrorCode.Arcaea_AliasSubmissionAlreadyExists);
+
+        return OkResp();
     }
 
     #endregion

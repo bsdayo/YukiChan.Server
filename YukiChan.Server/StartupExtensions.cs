@@ -66,8 +66,8 @@ internal static class StartupExtensions
         }
 
         AddAndEnsureCreated<ArcaeaDbContext>();
-        AddAndEnsureCreated<UserDataDbContext>();
-        AddAndEnsureCreated<GuildDataDbContext>();
+        AddAndEnsureCreated<UsersDbContext>();
+        AddAndEnsureCreated<GuildsDbContext>();
         AddAndEnsureCreated<CommandHistoryDbContext>();
     }
 
