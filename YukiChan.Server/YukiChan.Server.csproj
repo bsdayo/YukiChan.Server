@@ -15,6 +15,10 @@
         <PackageReference Include="ArcaeaUnlimitedAPI.Lib" Version="2.2.0" />
         <PackageReference Include="Asp.Versioning.Mvc" Version="7.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Serilog.AspNetCore" Version="6.1.1-dev-00293" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="Tomlyn.Extensions.Configuration" Version="1.0.5" />
@@ -33,6 +37,7 @@
 
     <ItemGroup>
       <Folder Include="configs" />
+      <Folder Include="Migrations\GuildsDb" />
     </ItemGroup>
 
 </Project>
