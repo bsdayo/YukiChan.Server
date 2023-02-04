@@ -45,4 +45,10 @@ public sealed class ArcaeaAssetsService
         await File.WriteAllBytesAsync(path, charImage);
         return charImage;
     }
+
+    public Task<byte[]> GetArcSongDb()
+    {
+        var path = $"{YukiServerDir.ArcaeaAssets}/arcsong.db";
+        return File.ReadAllBytesAsync(path);
+    }
 }

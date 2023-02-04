@@ -156,16 +156,29 @@ public sealed class ArcaeaService
         return _songDb.FuzzySearchId(query);
     }
 
-    public async Task<ArcaeaSongDbChart> GetChartInfo(string songId, int difficulty = 2)
+    public async Task<ArcaeaSong> GetSong(string songId)
     {
-        return await _songDb.Charts
+        var charts = await _songDb.Charts
+            .AsNoTracking()
+            .Where(chart => chart.SongId == songId)
+            .OrderBy(chart => chart.RatingClass)
+            .ToListAsync();
+        var package = await _songDb.Packages
+            .AsNoTracking()
+            .FirstAsync(p => p.Set == charts[0].Set);
+        return ArcaeaSong.FromDatabase(charts, package.Name);
+    }
+
+    public Task<ArcaeaSongDbChart> GetChartInfo(string songId, int difficulty = 2)
+    {
+        return _songDb.Charts
             .AsNoTracking()
             .FirstAsync(chart => chart.SongId == songId && chart.RatingClass == difficulty);
     }
 
-    public async Task<string[]> GetSongAliases(string songId)
+    public Task<string[]> GetSongAliases(string songId)
     {
-        return await _songDb.Aliases
+        return _songDb.Aliases
             .AsNoTracking()
             .Where(alias => alias.SongId == songId)
             .Select(alias => alias.Alias)
@@ -198,16 +211,64 @@ public sealed class ArcaeaService
             .AnyAsync(chart => chart.SongId == songId);
     }
 
-    public async Task<bool> AddAliasSubmission(ArcaeaAliasSubmission submission)
+    public async Task<(YukiErrorCode, int)> AddAliasSubmission(ArcaeaSubmitAliasRequest req)
     {
-        if (await _database.AliasSubmissions
+        if (await _songDb.Aliases
                 .AsNoTracking()
-                .ContainsAsync(submission))
-            return false;
+                .AnyAsync(alias => alias.SongId == req.SongId && alias.Alias == req.Alias))
+            return (YukiErrorCode.Arcaea_AliasAlreadyExists, -1);
 
-        _database.AliasSubmissions.Add(submission);
+        var previous = await _database.AliasSubmissions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(sub => sub.SongId == req.SongId && sub.Alias == req.Alias);
+        if (previous is not null)
+            return (YukiErrorCode.Arcaea_AliasSubmissionAlreadyExists, previous.Id);
+
+        var sub = new ArcaeaAliasSubmission
+        {
+            Platform = req.Platform,
+            UserId = req.UserId,
+            SongId = req.SongId,
+            Alias = req.Alias,
+            SubmitTime = DateTime.UtcNow,
+            Status = ArcaeaAliasSubmissionStatus.Pending
+        };
+
+        _database.AliasSubmissions.Add(sub);
         await _database.SaveChangesAsync();
-        return true;
+        return (YukiErrorCode.Ok, sub.Id);
+    }
+
+    public Task<List<ArcaeaAliasSubmission>> GetAllAliasSubmissions(ArcaeaAliasSubmissionStatus status)
+    {
+        return _database.AliasSubmissions
+            .AsNoTracking()
+            .Where(sub => sub.Status == status)
+            .ToListAsync();
+    }
+
+    public Task<ArcaeaAliasSubmission?> GetAliasSubmissionsById(int id)
+    {
+        return _database.AliasSubmissions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(submission => submission.Id == id);
+    }
+
+    public async Task UpdateAliasSubmission(ArcaeaAliasSubmission submission, ArcaeaAliasSubmissionStatus status)
+    {
+        submission.Status = status;
+        _database.AliasSubmissions.Update(submission);
+        await _database.SaveChangesAsync();
+
+        if (status != ArcaeaAliasSubmissionStatus.Accepted)
+            return;
+
+        if (await _songDb.Aliases
+                .AsNoTracking()
+                .AnyAsync(alias => alias.SongId == submission.SongId && alias.Alias == submission.Alias))
+            return;
+
+        await AddSongAlias(submission.SongId, submission.Alias);
     }
 
     #endregion

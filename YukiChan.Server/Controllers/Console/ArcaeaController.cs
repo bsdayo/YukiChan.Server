@@ -2,11 +2,11 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using YukiChan.Server.Models.Arcaea;
 using YukiChan.Server.Services.Console.Arcaea;
 using YukiChan.Server.Utils;
 using YukiChan.Shared.Data;
 using YukiChan.Shared.Data.Console.Arcaea;
+using YukiChan.Shared.Models.Arcaea;
 
 namespace YukiChan.Server.Controllers.Console;
 
@@ -140,6 +140,15 @@ public sealed class ArcaeaController : YukiController
 
     #region 信息相关
 
+    [HttpGet("songs/{query}")]
+    public async Task<IActionResult> OnQuerySong(string query)
+    {
+        var songId = await _service.QuerySongId(query);
+        if (songId is null) return NotFoundResp(YukiErrorCode.Arcaea_SongNotFound);
+        var song = await _service.GetSong(songId);
+        return OkResp(song);
+    }
+
     [HttpGet("songs/{query}/id")]
     public async Task<IActionResult> OnQuerySongId(string query)
     {
@@ -179,14 +188,57 @@ public sealed class ArcaeaController : YukiController
     }
 
     [HttpPost("alias-submissions")]
-    public async Task<IActionResult> OnAddAliasSubmission([FromBody] ArcaeaAliasSubmission submission)
+    public async Task<IActionResult> OnSubmitAlias([FromBody] ArcaeaSubmitAliasRequest req)
     {
-        if (!await _service.CheckSongIdExists(submission.SongId))
+        if (!await _service.CheckSongIdExists(req.SongId))
             return BadRequestResp(YukiErrorCode.Arcaea_SongNotFound);
 
-        if (!await _service.AddAliasSubmission(submission))
-            return BadRequestResp(YukiErrorCode.Arcaea_AliasSubmissionAlreadyExists);
+        var (code, submissionId) = await _service.AddAliasSubmission(req);
 
+        if (code == YukiErrorCode.Arcaea_AliasAlreadyExists)
+            return BadRequestResp(code);
+
+        var resp = new ArcaeaSubmitAliasResponse
+        {
+            SubmissionId = submissionId
+        };
+        return code == YukiErrorCode.Ok
+            ? OkResp(resp)
+            : BadRequestResp(resp, YukiErrorCode.Arcaea_AliasSubmissionAlreadyExists);
+    }
+
+    [HttpGet("alias-submissions")]
+    public async Task<IActionResult> OnGetAllAliasSubmission(string status = "pending")
+    {
+        var stat = status.ToLower() switch
+        {
+            "pending" => ArcaeaAliasSubmissionStatus.Pending,
+            "rejected" => ArcaeaAliasSubmissionStatus.Rejected,
+            "accepted" => ArcaeaAliasSubmissionStatus.Accepted,
+            _ => (ArcaeaAliasSubmissionStatus)(-100)
+        };
+
+        return (int)stat == -100
+            ? BadRequestResp()
+            : OkResp(await _service.GetAllAliasSubmissions(stat));
+    }
+
+    [HttpGet("alias-submissions/{id:int}")]
+    public async Task<IActionResult> OnGetAliasSubmission(int id)
+    {
+        var submission = await _service.GetAliasSubmissionsById(id);
+        return submission is null ? NotFoundResp() : OkResp(submission);
+    }
+    
+    [HttpPut("alias-submissions/{id:int}")]
+    public async Task<IActionResult> OnUpdateAliasSubmission(int id,
+        [FromBody] ArcaeaUpdateAliasSubmissionRequest req)
+    {
+        var submission = await _service.GetAliasSubmissionsById(id);
+        if (submission is null)
+            return NotFoundResp();
+
+        await _service.UpdateAliasSubmission(submission, req.Status);
         return OkResp();
     }
 

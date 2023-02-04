@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YukiChan.Server.Databases;
 
@@ -10,9 +11,11 @@ using YukiChan.Server.Databases;
 namespace YukiChan.Server.Migrations.ArcaeaDb
 {
     [DbContext(typeof(ArcaeaDbContext))]
-    partial class ArcaeaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230204152322_AddStatusToAliasSubmission")]
+    partial class AddStatusToAliasSubmission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");

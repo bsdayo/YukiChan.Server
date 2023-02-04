@@ -58,17 +58,17 @@ internal static class StartupExtensions
 
     internal static void AddDatabases(this IServiceCollection services)
     {
-        void AddAndEnsureCreated<TDbContext>() where TDbContext : DbContext, new()
+        void AddAndEnsureMigrated<TDbContext>() where TDbContext : DbContext, new()
         {
             services.AddDbContext<TDbContext>();
             using var tempDb = new TDbContext();
-            tempDb.Database.EnsureCreated();
+            tempDb.Database.Migrate();
         }
 
-        AddAndEnsureCreated<ArcaeaDbContext>();
-        AddAndEnsureCreated<UsersDbContext>();
-        AddAndEnsureCreated<GuildsDbContext>();
-        AddAndEnsureCreated<CommandHistoryDbContext>();
+        AddAndEnsureMigrated<ArcaeaDbContext>();
+        AddAndEnsureMigrated<UsersDbContext>();
+        AddAndEnsureMigrated<GuildsDbContext>();
+        AddAndEnsureMigrated<CommandHistoryDbContext>();
     }
 
     internal static void AddConsoleServices(this IServiceCollection services, IConfiguration configuration)

@@ -63,4 +63,11 @@ public sealed class ArcaeaAssetsController : YukiController
             return NotFound(auaEx.ToYukiResponse());
         }
     }
+
+    [HttpGet("songDb")]
+    public async Task<IActionResult> OnGetArcSongDb()
+    {
+        var songDb = await _service.GetArcSongDb();
+        return File(songDb, MediaTypeNames.Application.Octet);
+    }
 }
