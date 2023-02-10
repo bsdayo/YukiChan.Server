@@ -35,11 +35,11 @@ public class CommandHistory
     [Column("user_authority")]
     [Required]
     public required YukiUserAuthority UserAuthority { get; set; }
-    
+
     [Column("assignee_id")]
     [Required]
     public required string AssigneeId { get; set; }
-    
+
     [Column("environment")]
     [Required]
     public required YukiEnvironment Environment { get; set; }

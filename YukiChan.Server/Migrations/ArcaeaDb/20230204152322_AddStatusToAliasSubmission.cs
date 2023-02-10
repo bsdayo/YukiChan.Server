@@ -1,29 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace YukiChan.Server.Migrations.ArcaeaDb
+namespace YukiChan.Server.Migrations.ArcaeaDb;
+
+/// <inheritdoc />
+public partial class AddStatusToAliasSubmission : Migration
 {
     /// <inheritdoc />
-    public partial class AddStatusToAliasSubmission : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<int>(
-                name: "status",
-                table: "arcaea_alias_submissions",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
-        }
+        migrationBuilder.AddColumn<int>(
+            "status",
+            "arcaea_alias_submissions",
+            "INTEGER",
+            nullable: false,
+            defaultValue: 0);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "status",
-                table: "arcaea_alias_submissions");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            "status",
+            "arcaea_alias_submissions");
     }
 }

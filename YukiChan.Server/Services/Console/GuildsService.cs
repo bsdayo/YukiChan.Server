@@ -12,7 +12,7 @@ public sealed class GuildsService
     {
         _guildData = guildData;
     }
-    
+
     public async Task<string?> GetAssignee(string platform, string guildId)
     {
         var guild = await _guildData.Guilds
@@ -33,7 +33,7 @@ public sealed class GuildsService
             {
                 Platform = platform,
                 GuildId = guildId,
-                Assignee = botId,
+                Assignee = botId
             };
             _guildData.Guilds.Add(guild);
         }

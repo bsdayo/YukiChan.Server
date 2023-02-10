@@ -8,16 +8,20 @@ namespace YukiChan.Server.Models.Arcaea;
 [Table("arcaea_users")]
 public class ArcaeaDatabaseUser
 {
-    [Key, Column("id")]
+    [Key]
+    [Column("id")]
     public int Id { get; set; }
 
-    [Column("platform"), Required]
+    [Column("platform")]
+    [Required]
     public required string Platform { get; set; }
 
-    [Column("user_id"), Required]
+    [Column("user_id")]
+    [Required]
     public required string UserId { get; set; }
 
-    [Column("arcaea_id"), Required]
+    [Column("arcaea_id")]
+    [Required]
     public required string ArcaeaId { get; set; }
 
     [Column("arcaea_name")]

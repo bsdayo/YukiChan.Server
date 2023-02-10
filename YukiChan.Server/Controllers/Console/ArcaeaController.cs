@@ -229,7 +229,7 @@ public sealed class ArcaeaController : YukiController
         var submission = await _service.GetAliasSubmissionsById(id);
         return submission is null ? NotFoundResp() : OkResp(submission);
     }
-    
+
     [HttpPut("alias-submissions/{id:int}")]
     public async Task<IActionResult> OnUpdateAliasSubmission(int id,
         [FromBody] ArcaeaUpdateAliasSubmissionRequest req)
